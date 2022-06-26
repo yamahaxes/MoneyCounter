@@ -114,24 +114,24 @@ public class MoneyCounterManager {
 
     private List<Transfer> calculateTransfers(){
         List<Transfer> transfers = new ArrayList<>();
-        Map<Person, Double> personBalance = getPersonBalance();
+        Map<Person, Double> balance = getBalance();
 
-        for (Map.Entry<Person, Double> entryDebtor: personBalance.entrySet()) {
+        for (Map.Entry<Person, Double> entryDebtor: balance.entrySet()) {
 
             if (entryDebtor.getValue() <= 0){
                 continue;
             }
 
-            for (Map.Entry<Person, Double> entryCreditor: getPersonBalance().entrySet()) {
+            for (Map.Entry<Person, Double> entryCreditor: getBalance().entrySet()) {
 
                 if (entryCreditor.getValue() >= 0) {
                     continue;
                 }
                 double minSum = Math.min(entryDebtor.getValue(), Math.abs(entryCreditor.getValue()));
-                personBalance.put(entryDebtor.getKey(),
-                        personBalance.get(entryDebtor.getKey()) - minSum);
-                personBalance.put(entryCreditor.getKey(),
-                        personBalance.get(entryCreditor.getKey()) + minSum);
+                balance.put(entryDebtor.getKey(),
+                        balance.get(entryDebtor.getKey()) - minSum);
+                balance.put(entryCreditor.getKey(),
+                        balance.get(entryCreditor.getKey()) + minSum);
 
                 Transfer transfer = new Transfer(entryDebtor.getKey(), entryCreditor.getKey(), minSum);
                 transfers.add(transfer);
@@ -140,7 +140,7 @@ public class MoneyCounterManager {
         return transfers;
     }
 
-    private Map<Person, Double> getPersonBalance(){
+    private Map<Person, Double> getBalance(){
 
         Map<Person, Double> personBalance = new HashMap<>();
         List<Expense> expenses = event.getExpenses();
