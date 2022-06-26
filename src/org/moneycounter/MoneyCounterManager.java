@@ -84,7 +84,7 @@ public class MoneyCounterManager {
 
         for (Person personRow: people) {
             str = new StringBuilder();
-            str.append("\n").append(personRow.getName());
+            str.append("\n").append(personRow.getName()).append(",");
 
             for (Person personColumn: people) {
                 for (Transfer transfer: transfers) {
@@ -122,7 +122,11 @@ public class MoneyCounterManager {
                 continue;
             }
 
-            for (Map.Entry<Person, Double> entryCreditor: getBalance().entrySet()) {
+            for (Map.Entry<Person, Double> entryCreditor: balance.entrySet()) {
+
+                if (entryDebtor.getValue() <= 0){
+                    break;
+                }
 
                 if (entryCreditor.getValue() >= 0) {
                     continue;
