@@ -15,7 +15,6 @@ import java.util.zip.DataFormatException;
 public class MoneyCounterManager {
 
     private Event event;
-    private List<Person> people; // sorted list as in columns
 
     public MoneyCounterManager(){
 
@@ -32,12 +31,11 @@ public class MoneyCounterManager {
             // first line is a header
             String[] columns = lines[0].split(",");
             // initialization of all members
-            people = new ArrayList<>(); // sorted list as in columns
             Map<String, Person> personMap = new HashMap<>(); // to search by name
 
             for (int columnCounter = 2; columnCounter < columns.length; columnCounter++) {
                 Person person = new Person(columns[columnCounter]);
-                people.add(person);
+                event.addPerson(person);
                 personMap.put(columns[columnCounter], person);
             }
 
@@ -57,7 +55,7 @@ public class MoneyCounterManager {
                     }catch (NumberFormatException formatException){
                         sum = 0.0d;
                     }
-                    sharedCosts.put(people.get(columnCounter - 2), sum);
+                    sharedCosts.put(event.getPerson(columnCounter - 2), sum);
                 }
 
                 // add expense
@@ -76,6 +74,8 @@ public class MoneyCounterManager {
         List<Transfer> transfers = calculateTransfers();
 
         StringBuilder str = new StringBuilder(",");
+        List<Person> people = event.getPersonList();
+
         for (Person person: people) {
             str.append(person.getName()).append(",");
         }
