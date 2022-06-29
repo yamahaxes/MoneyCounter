@@ -102,16 +102,12 @@ public class Event {
                 Person debtor = entry.getKey();
 
                 if (!debtor.equals(whoPayPerson)){
-                    debtor.setBalance(
-                            debtor.getBalance() + entry.getValue()
-                    );
+                    debtor.addBalance(entry.getValue());
                     totalExpense += entry.getValue();
                 }
             }
 
-            whoPayPerson.setBalance(
-                    whoPayPerson.getBalance() - totalExpense
-            );
+            whoPayPerson.addBalance(- totalExpense);
         }
 
     }
