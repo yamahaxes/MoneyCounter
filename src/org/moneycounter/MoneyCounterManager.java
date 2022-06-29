@@ -3,6 +3,7 @@ package org.moneycounter;
 import org.moneycounter.event.Event;
 import org.moneycounter.event.Expense;
 import org.moneycounter.event.Person;
+import org.moneycounter.event.Transfer;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -71,7 +72,7 @@ public class MoneyCounterManager {
         }
 
         FileWriter writer = new FileWriter(file);
-        List<Transfer> transfers = calculateTransfers();
+        List<Transfer> transfers = event.getTransactions();
 
         StringBuilder str = new StringBuilder(",");
         List<Person> people = event.getPersonList();
@@ -106,73 +107,10 @@ public class MoneyCounterManager {
             return;
         }
 
-        List<Transfer> transfers = calculateTransfers();
+        List<Transfer> transfers = event.getTransactions();
         for (Transfer transfer: transfers) {
             System.out.println(transfer.getFromPerson() + " to " + transfer.getToPerson() + ": " + transfer.getSum());
         }
-    }
-
-    private List<Transfer> calculateTransfers(){
-        List<Transfer> transfers = new ArrayList<>();
-        Map<Person, Double> balance = getBalance();
-
-        for (Map.Entry<Person, Double> entryDebtor: balance.entrySet()) {
-
-            if (entryDebtor.getValue() <= 0){
-                continue;
-            }
-
-            for (Map.Entry<Person, Double> entryCreditor: balance.entrySet()) {
-
-                if (entryDebtor.getValue() <= 0){
-                    break;
-                }
-
-                if (entryCreditor.getValue() >= 0) {
-                    continue;
-                }
-                double minSum = Math.min(entryDebtor.getValue(), Math.abs(entryCreditor.getValue()));
-                balance.put(entryDebtor.getKey(),
-                        balance.get(entryDebtor.getKey()) - minSum);
-                balance.put(entryCreditor.getKey(),
-                        balance.get(entryCreditor.getKey()) + minSum);
-
-                Transfer transfer = new Transfer(entryDebtor.getKey(), entryCreditor.getKey(), minSum);
-                transfers.add(transfer);
-            }
-        }
-        return transfers;
-    }
-
-    private Map<Person, Double> getBalance(){
-
-        Map<Person, Double> personBalance = new HashMap<>();
-        List<Expense> expenses = event.getExpenses();
-
-        for (Expense expense:
-                expenses) {
-
-            Person whoPayPerson = expense.getWhoPayPerson();
-            double totalExpense = 0.0;
-
-            for (Map.Entry<Person, Double> entry:
-                    expense.getSharedCosts().entrySet()) {
-
-                Person debtor = entry.getKey();
-
-                if (!debtor.equals(whoPayPerson)){
-                    personBalance.put(debtor,
-                            personBalance.getOrDefault(debtor, 0.0) + entry.getValue());
-                    totalExpense += entry.getValue();
-                }
-            }
-
-            personBalance.put(whoPayPerson,
-                    personBalance.getOrDefault(whoPayPerson, 0.0) - totalExpense);
-        }
-
-        return personBalance;
-
     }
 
     private String readFileContents(String path) throws IOException {

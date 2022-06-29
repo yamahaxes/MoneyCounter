@@ -5,6 +5,7 @@ import java.util.Objects;
 public class Person {
 
     private final String name;
+    private double balance;
 
     public Person(String name){
         this.name = name;
@@ -31,4 +32,17 @@ public class Person {
     public String toString() {
         return name;
     }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public void addBalance(double balance){
+        this.balance += balance;
+    }
+
 }

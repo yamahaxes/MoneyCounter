@@ -1,4 +1,4 @@
-package org.moneycounter;
+package org.moneycounter.event;
 
 import org.moneycounter.event.Person;
 
